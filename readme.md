@@ -112,7 +112,6 @@ I’m very tempted to show the entire file but I will truncate to make best brie
 
 
          class SolarPanel(models.Model):
-          
              square_feet_access = IntegerRangeField()
              avail_team_period = DateRangeField()  
              types_of_surface = ArrayField( models.CharField(max_length=100, blank=True ),
