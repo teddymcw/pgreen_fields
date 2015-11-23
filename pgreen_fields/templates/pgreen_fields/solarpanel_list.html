@@ -1,0 +1,20 @@
+{% extends "_base.html"}
+{% block title %}All Products{% endblock title %}
+
+
+<div class="row">
+  <div class="col-sm-offset-1 col-sm-10">
+    <h1>Solar Panels</h1>
+
+    <div class="">
+      <ul class="owl-carousel product-carousel-ul">
+        {% for object in object_list %}
+          <li class="product-image-li">
+            <img src="{{ object.image1.url }}">
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+</div>
