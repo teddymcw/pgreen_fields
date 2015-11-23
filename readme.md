@@ -9,14 +9,14 @@ How does the Django ORM construct valid postgres SQL queries for these fields?
 
 ### 1.  Context    
 
-Field is an abstract class that represents a database table column. This is defined in django.db.models.fields     
+Field is an abstract class that represents a database table column. This is defined in django.db.models.fields (2415 lines)     
 
 
 
 What is a Field to Django and how are these field classes constructed?    
 
 Field is an abstract class that represents a database table column.     
-This is defined in django.db.models.fields    
+This is defined in django.db.models.fields ()    
 
     
     >>> from django.db.models import Field
@@ -24,22 +24,24 @@ This is defined in django.db.models.fields
     97
     
 
-Let’s pick out some truly intrinsic methods, and then very briefly walk through how a basic built-in Field is defiend    
+Let’s pick out some truly intrinsic Field method attributes and attributes, note what we may have to override and then very briefly walk through how a basic built-in Field is defined    
 
-1. contribute_to_class - How the Field class gets bound to the Model class we have defined, if this isn’t defined then the setattr() just gets called for the new Field class to the Model class    
+1. contribute_to_class() - How the Field class gets bound to the Model class we have defined, if this isn’t defined then the setattr() just gets called for the new Field class to the Model class    
 2. db_type() - Perform preliminary non-db specific value checks and conversions. This just returns a string e.g. 'int8range' for BigIntegerRangeField. When addressing just PG this is easy because we are writing for exactly one database, Postgres, and therefore know exactly what the Column type is  we return     
 3. get_internal_type() is a 'cheat' to convert to python type directly    
 4. get_db_prep_value()  Returns field's value prepared for interacting with the database backend.    
 5. get_prep_lookup() Perform preliminary non-db specific lookup checks and conversions.    
-6. get_db_prep_lookup()Returns field's value prepared for database lookup.    
-7. deconstruct() essentially for adding any kwargs that are custom for this Field type, the deconstruct method will be used for serialization and migrations    
+6. get_db_prep_lookup() Returns field's value prepared for database lookup.    
+7. validators and checks() Ensure instantiations are valid and throw errors when necessary    
+8. deconstruct() essentially for adding any kwargs that are custom for this Field type, the deconstruct method will be used for serialization and migrations    
 
+The DecimalField provides the tidiest example of how to compose a Field.     
+
+Yet this was very easy since Decimal is so standard    
 
 ### 2.  The Real Question and Challenge    
 
-That was a nice example of how to write a Field but it was very easy since Decimal is fairly standard   
-
-
+   
 One of the best paradigms in which to approach this is to present ourselves with the problem of writing the custom Postgres Field.    
  
 ### 3.  Array Type    
@@ -57,13 +59,13 @@ PostgreSQL allows columns of a table to be defined as variable-length multidimen
          );
  
 2. What python type does this most closely map to?     
-3. Even though we haven’t looked thoroughly at all the attributes of class Field, what additional attributes might we need to add to our subclass’ initializer.    
-I’m very tempted to show the entire file but I will truncate to make best brief example    
+3. Even though we haven’t looked thoroughly at all the attributes of class Field, what additional attributes might we need to add to the initializer of our subclass?    
 
 4. We want to do our logic in the database whenever possible.     
-
-5. We get into Transforms the ArrayLenTransform is the easiest example to look over.    
-6. Our ultimate goal again is to return a string that will compile into the SQL that we pass to our Postgres connection    
+5. Model our constraints and unique attributes, add them to the initializer / deconstuct()     
+6. Write all methods to convert to and from python precisely for our database connection    
+7. We get into Transforms the ArrayLenTransform is the easiest example to look over.    
+8. Our ultimate goal again is to return a string that will compile into the SQL that we pass to our Postgres connection    
 
          @ArrayField.register_lookup
          class ArrayLenTransform(Transform):
@@ -74,6 +76,11 @@ I’m very tempted to show the entire file but I will truncate to make best brie
 
              return 'array_length(%s, 1)' % lhs, params
 
+9. Apply all possible query operations that the Postgres type can do for us in Django    
+
+         Post.objects.create(name='First post', tags=['thoughts', 'django'])
+         Post.objects.filter(tags__contained_by=['thoughts', 'django'])
+         [<Post: First post>, <Post: Second post>]
 
 ### 4.  Range Type
 
