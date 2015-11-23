@@ -18,7 +18,7 @@ What is a Field to Django and how are these field classes constructed?
 Field is an abstract class that represents a database table column.     
 This is defined in django.db.models.fields    
 
-    ```python
+    ```
     >>> from django.db.models import Field
     >>> len(dir(Field))
     97
@@ -46,10 +46,10 @@ from the Postgres Docs:
 1. Array Type
 PostgreSQL allows columns of a table to be defined as variable-length multidimensional arrays. Arrays of any built-in or user-defined base type, enum type, or composite type can be created. (The type of the array needs to be specified.) 
  
-```SQL
-CREATE TABLE sal_emp (
+    ```SQL
+    CREATE TABLE sal_emp (
     name            text,
     pay_by_quarter  integer[],
     schedule        text[][]
-);
-```
+    );
+    ```
