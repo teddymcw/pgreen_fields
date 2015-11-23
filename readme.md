@@ -1,13 +1,13 @@
 #### django.contrib.postgres: ArrayField, HStoreField, and RangeField.    
 
-0. #### General Question     
+### 0.  General Question     
 
 Please provide a brief overview of the new field types, described here: ArrayField, HStoreField, and RangeField.     
 How are these field classes constructed?     
 How are they different from other Django model field definitions?     
 How does the Django ORM construct valid postgres SQL queries for these fields?     
 
-1. #### Context    
+### 1.  Context    
 
 Field is an abstract class that represents a database table column. This is defined in django.db.models.fields     
 
@@ -35,7 +35,7 @@ Let’s pick out some truly intrinsic methods, and then very briefly walk throug
 7. deconstruct() essentially for adding any kwargs that are custom for this Field type, the deconstruct method will be used for serialization and migrations    
 
 
-2. #### The Real Question and Challenge    
+### 2.  The Real Question and Challenge    
 
 That was a nice example of how to write a Field but it was very easy since Decimal is fairly standard   
 
