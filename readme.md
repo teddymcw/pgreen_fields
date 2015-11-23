@@ -39,6 +39,7 @@ Let’s pick out some truly intrinsic methods, and then very briefly walk throug
 
 That was a nice example of how to write a Field but it was very easy since Decimal is fairly standard   
 
+
 One of the best paradigms in which to approach this is to present ourselves with the problem of writing the custom Postgres Field.    
  
 ### 3.  Array Type    
@@ -49,11 +50,11 @@ from the Postgres Docs:
 PostgreSQL allows columns of a table to be defined as variable-length multidimensional arrays. Arrays of any built-in or user-defined base type, enum type, or composite type can be created. (The type of the array needs to be specified.)     
  
     
-    CREATE TABLE sal_emp (
-    name            text,
-    pay_by_quarter  integer[],
-    schedule        text[][]
-    );
+         CREATE TABLE sal_emp (
+         name            text,
+         pay_by_quarter  integer[],
+         schedule        text[][]
+         );
  
 2. What python type does this most closely map to?     
 3. Even though we haven’t looked thoroughly at all the attributes of class Field, what additional attributes might we need to add to our subclass’ initializer.    
